@@ -15,14 +15,12 @@ Create `.formatter.exs`:
   inputs: ["{mix,.formatter}.exs", "{config,lib,test}/**/*.{ex,exs}"],
   plugins: [Spark.Formatter]
 ]
-
 ```
 
 Create `config/config.exs`:
 ```
 import Config
 config :spark, formatter: [remove_parens?: true]
-
 ```
 
 Update `mix.exs`:
@@ -49,7 +47,22 @@ Update `.formatter.exs`:
 
 ## Skip protocol consolidation
 To avoid warnings about protocol consolidation when recompiling in dev, we
-set protocolc onsolidation to happen only in non-dev environments.
+set protocol consolidation to happen only in non-dev environments.
+```diff
+  def project do
+    [
+      app: :your_app,
+      version: "0.1.0",
+      elixir: "~> 1.14",
+      elixirc_paths: elixirc_paths(Mix.env()),
+      start_permanent: Mix.env() == :prod,
+      aliases: aliases(),
+-     deps: deps()
++     deps: deps(),
++     consolidate_protocols: Mix.env() != :dev
+    ]
+  end
+```
 
 ## Setup The Formatter
 Configure the DSL auto-formatter. This tells the formatter to remove excess parentheses
@@ -97,9 +110,6 @@ Update `config/config.exs`:
 ```
 
 ## Configure Dev/Test environments
-Configure backwards compatibility settings. See the [backwards compatibility guide](https://hexdocs.pm/ash/backwards-compatibility-config.html)
-for an explanation of each of the configurations.
-
 Update `config/config.exs`:
 ```diff
 ...
@@ -113,20 +123,17 @@ Create `config/dev.exs`:
 ```
 import Config
 config :ash, policies: [show_policy_breakdowns?: true]
-
 ```
 
 Create `config/prod.exs`:
 ```
 import Config
-
 ```
 
 Create `config/test.exs`:
 ```
 import Config
 config :ash, policies: [show_policy_breakdowns?: true]
-
 ```
 
 ## Setup Backwards Compatibility Configurations
